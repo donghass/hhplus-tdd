@@ -13,6 +13,14 @@ public class PointService {
         var userPoint = userPointTable.selectById(userId);
         System.out.println("포인트: " + userPoint.point());
     }
-
-
+    //사용자 포인트 충전
+    public void updateUserChargePoint(long userId, long amount) {
+        var userPoint = userPointTable.selectById(userId);
+        System.out.println("차지 포인트: " + userPoint.point());
+    }
+    //사용자 포인트 변경 이력
+    public void createUserPointHistory(long userId, long amount,TransactionType type) {
+        var userPoint = userPointTable.selectById(userId);
+        System.out.println("포인트 이력: " + userPoint.point());
+    }
 }

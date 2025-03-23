@@ -1,5 +1,7 @@
 package io.hhplus.tdd.point;
 
+import static io.hhplus.tdd.point.TransactionType.CHARGE;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.bind.annotation.*;
@@ -36,12 +38,13 @@ public class PointController {
      * TODO - 특정 유저의 포인트를 충전하는 기능을 작성해주세요.
      */
     @PatchMapping("{id}/charge")
-    public UserPoint charge(
-        @PathVariable long id,
-        @RequestBody long amount) {
-
+    public UserPoint charge(@PathVariable long id,@RequestBody long amount) {
+        PointService ps = new PointService();
+        ps.updateUserChargePoint(id,amount);
+        ps.createUserPointHistory(id,amount,CHARGE);
         return new UserPoint(0, 0, 0);
     }
+
 
     /**
      * TODO - 특정 유저의 포인트를 사용하는 기능을 작성해주세요.
