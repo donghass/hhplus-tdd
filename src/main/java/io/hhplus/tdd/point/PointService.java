@@ -2,6 +2,7 @@ package io.hhplus.tdd.point;
 
 import io.hhplus.tdd.database.PointHistoryTable;
 import io.hhplus.tdd.database.UserPointTable;
+import java.util.List;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -27,5 +28,10 @@ public class PointService {
     public void updateUserUsePoint(long userId, long amount) {
         var userPoint = userPointTable.selectById(userId);
         System.out.println("차지 포인트: " + userPoint.point());
+    }
+    //사용자 포인트 변경 이력 조회
+    public List<PointHistory> readUserPointHistory(long userId) {
+
+        return pointHistoryTable.selectAllByUserId(userId);
     }
 }
