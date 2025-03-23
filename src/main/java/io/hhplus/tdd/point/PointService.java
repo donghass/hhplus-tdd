@@ -23,4 +23,9 @@ public class PointService {
         var userPoint = userPointTable.selectById(userId);
         System.out.println("포인트 이력: " + userPoint.point());
     }
+    //사용자 포인트 사용
+    public void updateUserUsePoint(long userId, long amount) {
+        var userPoint = userPointTable.selectById(userId);
+        System.out.println("차지 포인트: " + userPoint.point());
+    }
 }

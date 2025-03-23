@@ -1,6 +1,7 @@
 package io.hhplus.tdd.point;
 
 import static io.hhplus.tdd.point.TransactionType.CHARGE;
+import static io.hhplus.tdd.point.TransactionType.USE;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -50,10 +51,10 @@ public class PointController {
      * TODO - 특정 유저의 포인트를 사용하는 기능을 작성해주세요.
      */
     @PatchMapping("{id}/use")
-    public UserPoint use(
-            @PathVariable long id,
-            @RequestBody long amount
-    ) {
+    public UserPoint use(@PathVariable long id,@RequestBody long amount) {
+        PointService ps = new PointService();
+        ps.updateUserUsePoint(id,amount);
+        ps.createUserPointHistory(id,amount,USE);
         return new UserPoint(0, 0, 0);
     }
 }
