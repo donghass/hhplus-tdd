@@ -38,7 +38,7 @@ public class ConcurrentTest {
         var point = pointService.readUserPoint(1);
         executorService.shutdown();
 
-        assertEquals(50000, point.point(), "포인트 값이 30000이어야 합니다.");
+        assertEquals(30000, point.point(), "포인트 값이 30000이어야 합니다.");
     }
 
     @Test

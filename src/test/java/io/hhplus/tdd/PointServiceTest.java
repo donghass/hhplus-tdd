@@ -15,35 +15,68 @@ import io.hhplus.tdd.point.PointService;
 import io.hhplus.tdd.point.TransactionType;
 import io.hhplus.tdd.point.UserPoint;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 
 @SpringBootTest
 public class PointServiceTest {
-    @Mock
+    @MockBean
     private UserPointTable userPointTable;
 
-    @Mock
+    @MockBean
     private PointHistoryTable pointHistoryTable;
 
-    @InjectMocks
+    @Autowired
     private PointService pointService;
 
-    @BeforeEach
-    void setup() {
-        MockitoAnnotations.openMocks(this);
+
+
+    @DisplayName("포인트 충전")
+    @Test
+    void pointChargeTest() {
+        // Arrange
+        long userId = 1L;
+        long amount = 500L;
+        // 기존 포인트가 1000L라고 가정
+        UserPoint userPoint = new UserPoint(userId, 1000L, System.currentTimeMillis());
+        when(userPointTable.selectById(userId)).thenReturn(userPoint);
+
+        // Act updateUserChargePoint 실행시 예외 발생하면 실패 -- 500000만 포인트 충전하면 실패
+        assertDoesNotThrow(() -> pointService.updateUserChargePoint(userId, amount));
+
+
+        // Assert
+        verify(userPointTable).insertOrUpdate(userId, 1500L);
     }
 
-    // 정상적으로 이력이 입력되는 경우
+    @DisplayName("포인트 사용")
     @Test
-    void 사용자_포인트_변경_이력_입력_성공() {
+    void pointUseTest() {
+        // Arrange -- 유저ID -1 , amount 음수, userPoint 음수 넣을 경우 오류 발생하여 테스트 실패
+        long userId = 1L;
+        long amount = 500L;
+        UserPoint userPoint = new UserPoint(userId, 1000L, System.currentTimeMillis());
+        when(userPointTable.selectById(userId)).thenReturn(userPoint);
+
+        // Act
+        assertDoesNotThrow(() -> pointService.updateUserUsePoint(userId, amount));
+
+        // Assert
+        verify(userPointTable).insertOrUpdate(userId, 500L);
+    }
+    @DisplayName("포인트 이력")
+    @Test
+    void pointHistoryTest() {
         // given
         long userId = 1L;
         long amount = 500L;
-        TransactionType type = TransactionType.CHARGE; // 예시로 충전 타입 사용
+        TransactionType type = TransactionType.USE; // 사용
         UserPoint userPoint = new UserPoint(userId, 1000L, System.currentTimeMillis());
         when(userPointTable.selectById(userId)).thenReturn(userPoint);
 
@@ -53,6 +86,5 @@ public class PointServiceTest {
         // then: pointHistoryTable.insert() 메서드가 호출되었는지 검증
         verify(pointHistoryTable).insert(eq(userId), eq(amount), eq(type), anyLong());
     }
-
 
 }
