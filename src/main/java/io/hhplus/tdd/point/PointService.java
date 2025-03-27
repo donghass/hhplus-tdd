@@ -48,22 +48,27 @@ public class PointService {
 
     //사용자 포인트 변경 이력 입력
     public void createUserPointHistory(long id, long amount,TransactionType type) {
-        isUser(id);
+        //이력 입력하기 전에 충전 또는 사용에서 사용자 검증하기 때문에 isUser 삭제
+//        isUser(id);
         pointHistoryTable.insert(id,amount,type,System.currentTimeMillis());
     }
 
     //사용자 포인트 변경 이력 조회
     public List<PointHistory> readUserPointHistory(long id) {
-        isUser(id);
-        var userPointHistory = pointHistoryTable.selectAllByUserId(id);
-        return userPointHistory;
-    }
-
-
-    public void isUser(long id) {
+//        isUser(id);
         var userPoint = userPointTable.selectById(id);
         if(userPoint == null){
             throw new IllegalArgumentException("없는 사용자입니다.");
         }
+        var userPointHistory = pointHistoryTable.selectAllByUserId(id);
+        return userPointHistory;
     }
+
+//변경 이력 조회에서만 사용하므로 별도로 빼지 않음
+//    public void isUser(long id) {
+//        var userPoint = userPointTable.selectById(id);
+//        if(userPoint == null){
+//            throw new IllegalArgumentException("없는 사용자입니다.");
+//        }
+//    }
 }
